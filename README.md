@@ -66,6 +66,3 @@ Access the application through your web browser at `http://localhost:5000`
 4. Push to the branch
 5. Create a Pull Request
 
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details
