@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Classes Management</title>
+    <style>
+        body {
+            background-image: url({{ url_for('static', filename='images/admin_dashboard.png') }});
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh;
+            background-attachment: fixed;
+            padding: 40px;
+        }
+        .classes-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        h2, h3 {
+            color: #333;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+        .class-form {
+            margin-bottom: 30px;
+        }
+        .class-form input {
+            padding: 12px;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.95);
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        .class-form input:focus {
+            border-color: #2196F3;
+            box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+        }
+        .class-form button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .class-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);
+        }
+        .classes-list {
+            list-style: none;
+            padding: 0;
+        }
+        .classes-list li {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            background: rgba(255, 255, 255, 0.95);
+            margin-bottom: 5px;
+            border-radius: 8px;
+        }
+        .classes-list li:last-child {
+            border-bottom: none;
+        }
+        .back-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="classes-container">
+        <h2>Add New Class</h2>
+        <form class="class-form" method="POST" action="/add_class">
+        <label for="class_name">Class Name:</label>
+        <input type="text" id="class_name" name="class_name" required>
+        <button type="submit">Add Class</button>
+    </form>
+
+    <h3>Existing Classes</h3>
+    <ul>
+        {% for c in classes %}
+            <li>
+            <span class="class-name">{{ c[1] }}</span>
+            <span class="class-id">(ID: {{ c[0] }})</span>
+        </li>
+        {% else %}
+            <li class="no-classes">
+            <span>No classes added yet.</span>
+        </li>
+        {% endfor %}
+    </ul>
+    <a href="/dashboard" class="back-link">Back to Dashboard</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Attendance Management</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        h2 { color: #333; }
+        table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+        th, td { border: 1px solid #999; padding: 8px; text-align: left; }
+        select, input, button { margin: 3px; }
+        button.delete-btn {
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            cursor: pointer;
+        }
+        button.delete-btn:hover { background-color: #c9302c; }
+        button.update-btn {
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        button.update-btn:hover { background-color: #449d44; }
+        a.download-link {
+            display: inline-block;
+            margin-top: 12px;
+            text-decoration: none;
+            background: #0275d8;
+            color: white;
+            padding: 6px 10px;
+        }
+        a.download-link:hover { background: #025aa5; }
+    </style>
+</head>
+<body style="background-image: url({{ url_for('static', filename='images/admin_dashboard.png') }}); background-size: cover; background-position: center; min-height: 100vh; background-attachment: fixed; padding: 40px;">
+
+<div class="container-fluid" style="background-image: url({{ url_for('static', filename='images/admin_dashboard.png') }}); background-size: cover; background-position: center; min-height: 100vh; background-attachment: fixed; padding: 40px; display: flex; justify-content: center; align-items: center;">
+    <div class="attendance-box" style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); width: 80%; max-width: 1200px;">
+        <h2 style="color: #333; text-align: center; margin-bottom: 30px;">Attendance Management</h2>
+        <div class="mb-3" style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+            <h3 style="color: #666;">Current Date:</h3>
+            <p style="font-size: 24px; font-weight: 600; color: #333;">{{ current_date }}</p>
+        </div>
+
+    <!-- Filter Form Container -->
+    <div class="card" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding: 30px; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin-bottom: 30px;">
+
+    <!-- Filter Form -->
+    <form method="GET" action="/admin/attendance" class="filter-form" style="display: flex; flex-wrap: wrap; gap: 15px;">
+        <div class="mb-3" style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+            <label for="class_id">Class:</label>
+            <select name="class_id" id="class_id" onchange="this.form.submit()" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; background: rgba(255, 255, 255, 0.95); transition: all 0.3s ease;">
+                <option value="">--Select Class--</option>
+                {% for cid, cname in classes %}
+                    <option value="{{ cid }}" {% if selected_class == cid %}selected{% endif %}>
+                        {{ cname }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3" style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+            <label for="subject">Subject:</label>
+            <select name="subject" id="subject" onchange="this.form.submit()" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; background: rgba(255, 255, 255, 0.95); transition: all 0.3s ease;">
+                <option value="">--Select Subject--</option>
+                {% for subj in subjects %}
+                    <option value="{{ subj }}" {% if selected_subject == subj %}selected{% endif %}>
+                        {{ subj }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3" style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+            <label for="date">Date:</label>
+            <input type="date" name="date" id="date" value="{{ selected_date }}" onchange="this.form.submit()" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; background: rgba(255, 255, 255, 0.95); transition: all 0.3s ease;">
+        </div>
+
+        <div class="mb-3" style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+            <label for="student_id">Student:</label>
+            <select name="student_id" id="student_id" onchange="this.form.submit()" {% if not students_list %}disabled{% endif %} style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; background: rgba(255, 255, 255, 0.95); transition: all 0.3s ease;">
+                <option value="">--All Students--</option>
+                {% for sid, usn, name in students_list %}
+                    <option value="{{ sid }}" {% if selected_student == sid %}selected{% endif %}>
+                        {{ name }} ({{ usn }})
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    </form>
+    </div>
+
+    <br>
+
+    {% if attendance_records %}
+    <!-- Update Attendance Form -->
+    <div class="card" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding: 30px; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin-bottom: 30px;">
+        <form method="POST"
+          action="/admin/attendance?class_id={{ selected_class }}&subject={{ selected_subject }}&date={{ selected_date }}{% if selected_student is not none %}&student_id={{ selected_student }}{% endif %}">
+
+        <div class="attendance-table-container">
+            <table style="width: 100%; border-collapse: separate; border-spacing: 0;">
+                <thead>
+                <tr style="background: rgba(255, 255, 255, 0.95); font-weight: 600; color: #333;">
+                    <th>USN</th>
+                    <th>Name</th>
+                    {% if not selected_subject %}<th>Subject</th>{% endif %}
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for record in attendance_records %}
+                <tr>
+                    <td>{{ record[1] }}</td>
+                    <td>{{ record[2] }}</td>
+
+                    {% if not selected_subject %}
+                        <td>{{ record[3] }}</td>
+                        <td>
+                            <select name="status_{{ record[0] }}">
+                                <option value="Present" {% if record[4] == "Present" %}selected{% endif %}>Present</option>
+                                <option value="Absent" {% if record[4] == "Absent" %}selected{% endif %}>Absent</option>
+                            </select>
+                        </td>
+                    {% else %}
+                        <td>
+                            <select name="status_{{ record[0] }}">
+                                <option value="Present" {% if record[3] == "Present" %}selected{% endif %}>Present</option>
+                                <option value="Absent" {% if record[3] == "Absent" %}selected{% endif %}>Absent</option>
+                            </select>
+                        </td>
+                    {% endif %}
+
+                    <td>
+                        <!-- Delete Button -->
+                        <div class="mb-3" style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                            <form class="inline" method="POST" action="/delete_attendance/{{ record[0] }}"
+                                  onsubmit="return confirm('Delete this attendance record?');">
+                                <input type="hidden" name="class_id" value="{{ selected_class }}">
+                                <input type="hidden" name="subject" value="{{ selected_subject }}">
+                                <input type="hidden" name="date" value="{{ selected_date }}">
+                                {% if selected_student is not none %}
+                                <input type="hidden" name="student_id" value="{{ selected_student }}">
+                                {% endif %}
+                                <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; transition: all 0.3s ease;">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Update Button -->
+        <div class="update-button-container" style="display: flex; justify-content: center; margin-top: 20px;">
+            <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; cursor: pointer; transition: all 0.3s ease;">
+                Update Attendance
+            </button>
+        </div>
+
+        <!-- Download Link -->
+        <div class="download-link-container" style="display: flex; justify-content: center; margin-top: 20px;">
+            <a class="btn btn-primary" style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; transition: all 0.3s ease;"
+               href="/admin/download_attendance?class_id={{ selected_class }}&subject={{ selected_subject }}&date={{ selected_date }}{% if selected_student %}&student_id={{ selected_student }}{% endif %}">
+                Download Class Attendance CSV
+            </a>
+        </div>
+    </form>
+    </div>
+    {% else %}
+    <p>No attendance records found for this selection.</p>
+    {% endif %}
+
+    <br><br>
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="/dashboard" class="btn btn-primary" style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; transition: all 0.3s ease;">
+            Back to Dashboard
+        </a>
+    </div>
+
+</div>
+
+</body>
+</html>

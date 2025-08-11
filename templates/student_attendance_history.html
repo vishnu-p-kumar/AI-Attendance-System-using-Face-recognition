@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Attendance History</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 40px;
+            background-attachment: fixed;
+        }
+        .attendance-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .attendance-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .attendance-header h2 {
+            color: #2c3e50;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #34495e;
+            font-weight: 600;
+        }
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3e%3cpath fill='none' stroke='%23666' stroke-width='2' d='M6 8l6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 20px;
+        }
+        .form-group select:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        .form-group select option {
+            background: white;
+            color: #34495e;
+        }
+        .date-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .date-input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        .btn-primary {
+            width: 150px;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+        .attendance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        .attendance-table th,
+        .attendance-table td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .attendance-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .attendance-table tr {
+            transition: all 0.3s ease;
+        }
+        .attendance-table tr:hover {
+            background: #f8f9fa;
+            transform: translateY(-2px);
+        }
+        .attendance-table .status-present {
+            color: #27ae60;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .attendance-table .status-absent {
+            color: #e74c3c;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .download-link {
+            display: inline-block;
+            margin: 15px 0;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        .download-link:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        .error-message {
+            text-align: center;
+            color: #e74c3c;
+            font-weight: 600;
+            padding: 20px;
+            border-radius: 15px;
+            background: rgba(231, 76, 60, 0.1);
+            margin: 20px 0;
+            border: 1px solid rgba(231, 76, 60, 0.2);
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.1);
+        }
+        .back-button-container {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        .stat-card {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .subject-stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .subject-stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        .subject-stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .subject-header {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .subject-header h6 {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        .subject-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+        .stat-item .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .stat-item .stat-value {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body style="background-image: url({{ url_for('static', filename='images/student_dashboard.png') }}); background-size: cover; background-position: center; min-height: 100vh; background-attachment: fixed;">
+    <div class="container-fluid" style="background-image: url({{ url_for('static', filename='images/student_dashboard.png') }}); background-size: cover; background-position: center; min-height: 100vh; background-attachment: fixed; padding: 40px; display: flex; justify-content: center; align-items: center;">
+        <div class="attendance-container">
+            <h2>Student Attendance History</h2>
+
+            <!-- Filter Form -->
+            <form method="GET" action="/admin/student_attendance_history" class="mb-4">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="class_id">Select Class</label>
+                            <select name="class_id" id="class_id" required onchange="this.form.submit()">
+                                <option value="">--Select Class--</option>
+                                {% for cid, cname in classes %}
+                                    <option value="{{ cid }}" {% if selected_class_id == cid %}selected{% endif %}>{{ cname }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="student_id">Select Student</label>
+                            <select name="student_id" id="student_id" {% if not selected_class_id %}disabled{% endif %} onchange="this.form.submit()">
+                                <option value="">--All Students in Class--</option>
+                                {% for sid, usn, name in filtered_students %}
+                                    <option value="{{ sid }}" {% if selected_student_id == sid %}selected{% endif %}>{{ name }} ({{ usn }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="start_date">Start Date</label>
+                            <input type="date" name="start_date" value="{{ start_date or '' }}" class="date-input">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="end_date">End Date</label>
+                            <input type="date" name="end_date" value="{{ end_date or '' }}" class="date-input">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-3">
+                    <button type="submit" class="btn-primary">Filter Records</button>
+                </div>
+            </form>
+
+            {% if attendance_records %}
+                <div class="attendance-header">
+                    {% if selected_student_id %}
+                        <h3>Attendance for {{ student_info[1] }} ({{ student_info[0] }})</h3>
+                        <p class="text-muted mb-4">Showing attendance records from {{ start_date or 'All Dates' }} to {{ end_date or 'All Dates' }}</p>
+                        <div class="stats-container mb-4">
+                            <div class="stat-card">
+                                <div class="stat-value">{{ total_records }}</div>
+                                <div class="stat-label">Total Records</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">{{ present_count }}</div>
+                                <div class="stat-label">Present</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">{{ absent_count }}</div>
+                                <div class="stat-label">Absent</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">{{ attendance_percentage }}%</div>
+                                <div class="stat-label">Overall Rate</div>
+                            </div>
+                        </div>
+
+                        {% if subject_stats %}
+                        <h4 class="mt-4">Subject-wise Statistics</h4>
+                        <div class="subject-stats-container mt-3">
+                            {% for subject, stats in subject_stats.items() %}
+                            <div class="subject-stat-card mb-3">
+                                <div class="subject-header">
+                                    <h6 class="mb-0">{{ subject }}</h6>
+                                </div>
+                                <div class="subject-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-label">Total:</span>
+                                        <span class="stat-value">{{ stats.total }}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Present:</span>
+                                        <span class="stat-value">{{ stats.present }}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Absent:</span>
+                                        <span class="stat-value">{{ stats.absent }}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Attendance Rate:</span>
+                                        <span class="stat-value">{{ stats.percentage }}%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        <a href="/admin/download_student_history?student_id={{ selected_student_id }}&start_date={{ start_date }}&end_date={{ end_date }}" class="download-link mb-4">
+                            Download Attendance History CSV
+                        </a>
+                    {% else %}
+                        {% if selected_class_id %}
+                            <h3>Attendance for Class</h3>
+                            <p class="text-muted mb-4">Showing attendance records from {{ start_date or 'All Dates' }} to {{ end_date or 'All Dates' }}</p>
+                            <a href="/admin/download_class_history?class_id={{ selected_class_id }}&start_date={{ start_date }}&end_date={{ end_date }}" class="download-link mb-4">
+                                Download Class Attendance History CSV
+                            </a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+
+                <div class="attendance-table-container">
+                    <table class="attendance-table">
+                        <thead>
+                            {% if selected_student_id %}
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <th>USN</th>
+                                    <th>Name</th>
+                                    <th>Subject</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            {% endif %}
+                        </thead>
+                        <tbody>
+                            {% for row in attendance_records %}
+                                {% if selected_student_id %}
+                                    <tr>
+                                        <td>{{ row[0] }}</td>
+                                        <td>{{ row[1] }}</td>
+                                        <td class="{% if row[2] == 'Present' %}status-present{% else %}status-absent{% endif %}">{{ row[2] }}</td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td>{{ row[0] }}</td>
+                                        <td>{{ row[1] }}</td>
+                                        <td>{{ row[2] }}</td>
+                                        <td>{{ row[3] }}</td>
+                                        <td class="{% if row[4] == 'Present' %}status-present{% else %}status-absent{% endif %}">{{ row[4] }}</td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="error-message">
+                    {% if selected_class_id %}
+                        No attendance records found for the selected filters.
+                    {% else %}
+                        Please select a class to view attendance records.
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            <div class="back-button-container">
+                <a href="/dashboard" class="btn-primary">Back to Admin Dashboard</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

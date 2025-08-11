@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Timetable{% endblock %}
+
+{% block content %}
+<div class="container-fluid" style="background-image: url({{ url_for('static', filename='images/admin_dashboard.png') }}); background-size: cover; background-position: center; min-height: 100vh; background-attachment: fixed; padding: 40px;">
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title mb-4" style="color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">Edit Timetable Entry</h2>
+                    
+                    <form method="POST" action="/edit_timetable/{{ tid }}" class="needs-validation" novalidate style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding: 30px; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
+                        <input type="hidden" name="class_id" value="{{ class_id }}">
+
+                        <div class="mb-3" style="margin-bottom: 20px;">
+                            <label for="subject" class="form-label">Subject:</label>
+                            <input type="text" name="subject" id="subject" 
+                                   class="form-control" 
+                                   value="{{ subject }}" required>
+                            <div class="invalid-feedback">Please enter a subject name.</div>
+                        </div>
+
+                        <div class="row" style="margin-bottom: 20px;">
+                            <div class="col-md-6 mb-3">
+                                <label for="start_time" class="form-label">Start Time:</label>
+                                <input type="time" name="start_time" id="start_time" 
+                                       class="form-control" 
+                                       value="{{ start_time }}" required>
+                                <div class="invalid-feedback">Please select a start time.</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="end_time" class="form-label">End Time:</label>
+                                <input type="time" name="end_time" id="end_time" 
+                                       class="form-control" 
+                                       value="{{ end_time }}" required>
+                                <div class="invalid-feedback">Please select an end time.</div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between" style="margin-top: 20px;">
+                            <a href="/timetable?class_id={{ class_id }}" class="btn btn-secondary" style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; transition: all 0.3s ease;">
+                                <i class="fas fa-arrow-left me-2"></i>
+                                Back to Timetable
+                            </a>
+                            <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; transition: all 0.3s ease;">
+                                <i class="fas fa-save me-2"></i>
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Form validation
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+
+    // Add smooth scrolling for navigation links
+    $('.nav-link').on('click', function(e) {
+        e.preventDefault();
+        var href = $(this).attr('href');
+        window.location.href = href;
+    });
+
+    // Time validation
+    $(document).ready(function() {
+        $('#end_time').on('change', function() {
+            var startTime = $('#start_time').val();
+            var endTime = $(this).val();
+            
+            if (startTime && endTime) {
+                var start = new Date('1970-01-01T' + startTime);
+                var end = new Date('1970-01-01T' + endTime);
+                
+                if (end <= start) {
+                    alert('End time must be after start time!');
+                    $(this).val('');
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

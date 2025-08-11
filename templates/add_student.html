@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Add Student{% endblock %}
+
+{% block content %}
+<div class="container-fluid" style="background-image: url({{ url_for('static', filename='images/student_dashboard.png') }}); background-size: cover; background-position: center; min-height: 100vh; background-attachment: fixed; padding: 40px;">
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title mb-4" style="color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">Add New Student</h2>
+                    
+                    <form method="POST" action="/add_student" class="needs-validation" novalidate style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding: 30px; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="usn" class="form-label">USN:</label>
+                                <input type="text" name="usn" id="usn" 
+                                       class="form-control" required>
+                                <div class="invalid-feedback">Please enter the student's USN.</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label">Name:</label>
+                                <input type="text" name="name" id="name" 
+                                       class="form-control" required>
+                                <div class="invalid-feedback">Please enter the student's name.</div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="dob" class="form-label">Date of Birth:</label>
+                                <input type="date" name="dob" id="dob" 
+                                       class="form-control" required>
+                                <div class="invalid-feedback">Please select the date of birth.</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="class_id" class="form-label">Select Class:</label>
+                                <select name="class_id" id="class_id" 
+                                        class="form-select" required>
+                                    <option value="">-- Select Class --</option>
+                                    {% for cid, cname in classes %}
+                                        <option value="{{ cid }}">{{ cid }} - {{ cname }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="invalid-feedback">Please select a class.</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="image_path" class="form-label">Face Image Path:</label>
+                            <input type="text" name="image_path" id="image_path" 
+                                   class="form-control" 
+                                   placeholder="C:/path/to/image.jpg" required>
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Please provide the full path to the student's face image file.
+                            </div>
+                            <div class="invalid-feedback">Please enter the image path.</div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="/dashboard" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>
+                                Back to Dashboard
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-user-plus me-2"></i>
+                                Add Student
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Form validation
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+
+    // Add smooth scrolling for navigation links
+    $('.nav-link').on('click', function(e) {
+        e.preventDefault();
+        var href = $(this).attr('href');
+        window.location.href = href;
+    });
+
+    // Image path validation
+    $(document).ready(function() {
+        $('#image_path').on('input', function() {
+            var path = $(this).val();
+            if (path && !path.toLowerCase().endsWith('.jpg') && !path.toLowerCase().endsWith('.jpeg') && !path.toLowerCase().endsWith('.png')) {
+                alert('Please provide a valid image file path (JPEG or PNG format)');
+                $(this).val('');
+            }
+        });
+    });
+</script>
+{% endblock %}

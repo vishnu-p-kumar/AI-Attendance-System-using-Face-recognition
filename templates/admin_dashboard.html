@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid" style="background-image: url({{ url_for('static', filename='images/admin_dashboard.png') }}); background-size: cover; background-position: center; min-height: 100vh; background-attachment: fixed; padding: 40px 0;">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4 text-white" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.8); font-size: 2.5rem; letter-spacing: 1px;">Admin Dashboard</h2>
+            
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-lg" style="transition: transform 0.3s ease; border-radius: 15px;">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-chalkboard-teacher me-2"></i>
+                                Manage Classes
+                            </h5>
+                            <p class="card-text">View and manage all classes in the system.</p>
+                            <a href="/classes" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); border: none; padding: 12px 24px; border-radius: 25px; transition: all 0.3s ease;">Go to Classes</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-lg" style="transition: transform 0.3s ease; border-radius: 15px;">
+                        <div class="card-body">
+                            <div class="navbar-brand">
+                                <i class="fas fa-user-shield me-2"></i>
+                                Admin Dashboard
+                            </div>
+                            <p class="card-text">Register new students with face recognition.</p>
+                            <a href="/add_student_form" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%); border: none; padding: 12px 24px; border-radius: 25px; transition: all 0.3s ease;">Add Student</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-lg" style="transition: transform 0.3s ease; border-radius: 15px;">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-clock me-2"></i>
+                                Timetable
+                            </h5>
+                            <p class="card-text">Manage class schedules and timetables.</p>
+                            <a href="/timetable" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #FFC107 0%, #FFA000 100%); border: none; padding: 12px 24px; border-radius: 25px; transition: all 0.3s ease;">Manage Timetable</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-lg" style="transition: transform 0.3s ease; border-radius: 15px;">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-check-circle me-2"></i>
+                                Mark Attendance
+                            </h5>
+                            <p class="card-text">Take attendance using face recognition.</p>
+                            <a href="/mark_attendance" class="btn btn-primary">Mark Attendance</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-lg" style="transition: transform 0.3s ease; border-radius: 15px;">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-file-alt me-2"></i>
+                                Manage Attendance
+                            </h5>
+                            <p class="card-text">View and manage attendance records.</p>
+                            <a href="/admin/attendance" class="btn btn-primary">View Records</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-lg" style="transition: transform 0.3s ease; border-radius: 15px;">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-history me-2"></i>
+                                Attendance History
+                            </h5>
+                            <p class="card-text">View detailed attendance records and analytics.</p>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <a href="/admin/student_attendance_history" class="btn btn-primary" style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%); border: none; padding: 12px 24px; border-radius: 25px; transition: all 0.3s ease;">
+                                    View History
+                                </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="position-fixed bottom-0 end-0 m-4">
+                <a href="/logout" class="btn btn-danger" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); border: none; padding: 8px 16px; border-radius: 20px;">
+                    <i class="fas fa-sign-out-alt me-2"></i>
+                    Logout
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        // Add smooth scrolling for navigation links
+        $('.nav-link').on('click', function(e) {
+            e.preventDefault();
+            var href = $(this).attr('href');
+            window.location.href = href;
+        });
+    });
+</script>
+{% endblock %}

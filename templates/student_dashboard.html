@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid" style="background-image: url({{ url_for('static', filename='images/student_dashboard.png') }}); background-size: cover; background-position: center; min-height: 100vh; background-attachment: fixed; padding: 40px 0;">
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title mb-4" style="color: #333; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); font-size: 2rem;">Welcome, {{ usn }}</h2>
+                    {% if current_subject %}
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="card" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 15px;">
+                                    <div class="card-body" style="padding: 20px;">
+                                        <h5 class="card-title">Current Class</h5>
+                                        <p class="card-text">
+                                            <strong>Subject:</strong> {{ current_subject }}<br>
+                                            <strong>Status:</strong> 
+                                            {% if current_status == 'Present' %}
+                                                <span class="text-success fw-bold">Present</span>
+                                            {% else %}
+                                                <span class="text-danger fw-bold">Absent</span>
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            No ongoing class right now.
+                        </div>
+                    {% endif %}
+
+                    <div class="navbar-brand">
+                        <i class="fas fa-user-graduate me-2"></i>
+                        Student Dashboard
+                    </div>
+
+                    <h3 class="mb-4">Your Subjects</h3>
+                    {% if subjects %}
+                        <div class="row g-3">
+                            {% for subject in subjects %}
+                                <div class="col-md-4">
+                                    <div class="card h-100" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 15px; transition: transform 0.3s ease;">
+                                        <div class="card-body" style="padding: 20px;">
+                                            <h5 class="card-title" style="color: #333; font-weight: 600;">{{ subject }}</h5>
+                                            <a href="/attendance_graph/{{ subject }}" 
+                                               class="btn btn-primary w-100" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); border: none; padding: 12px 24px; border-radius: 25px; transition: all 0.3s ease;">
+                                                <i class="fas fa-chart-line me-2" style="color: #4CAF50;"></i>
+                                                View Attendance Graph
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            No attendance records are available yet.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="position-fixed bottom-0 end-0 m-4">
+                <a href="/logout" class="btn btn-danger" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); border: none; padding: 8px 16px; border-radius: 20px;">
+                    <i class="fas fa-sign-out-alt me-2"></i>
+                    Logout
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

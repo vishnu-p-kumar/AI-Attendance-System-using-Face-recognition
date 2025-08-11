@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}Attendance Graph - {{ subject }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid" style="background-image: url({{ url_for('static', filename='images/admin_dashboard.png') }}); background-size: cover; background-position: center; min-height: 100vh; background-attachment: fixed; padding: 40px;">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <h2 class="card-title mb-4" style="color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); text-align: center;">Attendance Graph for {{ subject }}</h2>
+        </div>
+
+        <div class="d-flex flex-wrap justify-content-center gap-4" style="margin-top: 20px;">
+            <!-- Left Box: Graph and Stats -->
+            <div class="stat-box-container" style="flex: 1 1 320px; max-width: 400px; background: rgba(255, 255, 255, 0.95); border-radius: 15px; padding: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
+                <canvas id="attendanceChart" width="350" height="350"></canvas>
+
+                <div style="margin-top:30px; display: flex; justify-content: space-around; font-family: Arial, sans-serif;">
+                    <div class="stat-box" style="background: #d4edda; border-radius: 10px; padding: 20px; min-width: 120px;">
+                        <i class="fas fa-check-circle" style="color: #28a745; font-size: 2rem;"></i>
+                        <span id="presentCount" class="stat-value" style="display:block; font-size: 1.5rem; margin-top: 8px;">0</span>
+                        <p class="stat-label" style="margin: 0; text-align: center;">Present</p>
+                    </div>
+                    <div class="stat-box" style="background: #f8d7da; border-radius: 10px; padding: 20px; min-width: 120px;">
+                        <i class="fas fa-times-circle" style="color: #dc3545; font-size: 2rem;"></i>
+                        <span id="absentCount" class="stat-value" style="display:block; font-size: 1.5rem; margin-top: 8px;">0</span>
+                        <p class="stat-label" style="margin: 0; text-align: center;">Absent</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Box: Attendance History Table -->
+            <div class="history-box" style="flex: 1 1 320px; max-width: 600px; background: rgba(255, 255, 255, 0.95); border-radius: 15px; padding: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); overflow-x: auto;">
+                <h3 style="color: #333; margin-bottom: 20px; font-family: Arial, sans-serif;">Attendance History Table</h3>
+                <table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif;">
+                    <thead>
+                        <tr style="background-color: #f8f9fa;">
+                            <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Date</th>
+                            <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for date, status in records %}
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid #ddd;">{{ date }}</td>
+                            <td style="padding: 10px; border: 1px solid #ddd;">
+                                {% if status.strip().lower() == "present" %}
+                                    <span style="color:green; font-weight:bold;">Present</span>
+                                {% else %}
+                                    <span style="color:red; font-weight:bold;">Absent</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="2" style="padding: 10px; border: 1px solid #ddd; text-align: center;">No attendance records for this subject.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-12" style="margin-top: 40px; text-align: center;">
+            <a href="/dashboard" class="btn btn-secondary" style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%); color: white; border: none; padding: 12px 20px; border-radius: 25px; text-decoration: none; display: inline-block; transition: all 0.3s ease;">
+                <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var dataStatuses = {{ statuses | tojson }};
+        var presentCount = dataStatuses.filter(status => status === 1).length;
+        var absentCount = dataStatuses.filter(status => status === 0).length;
+
+        document.getElementById('presentCount').textContent = presentCount;
+        document.getElementById('absentCount').textContent = absentCount;
+
+        var ctx = document.getElementById('attendanceChart').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Present', 'Absent'],
+                datasets: [{
+                    data: [presentCount, absentCount],
+                    backgroundColor: ['#28a745', '#dc3545']
+                }]
+            },
+            options: {
+                responsive: true,
+                cutout: '60%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { boxWidth: 20, padding: 15 }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                var label = context.label || '';
+                                if (label) label += ': ';
+                                var total = presentCount + absentCount;
+                                if (context.parsed !== null && total > 0) {
+                                    label += context.parsed + ' days (' +
+                                             Math.round((context.parsed / total) * 100) + '%)';
+                                } else {
+                                    label += context.parsed + ' days';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+<style>
+.stat-label { font-weight: 600; color: #6c757d; }
+.stat-value { font-weight: bold; color: #343a40; }
+
+.stat-box-container {
+    /* container styles included inline above */
+}
+
+.stat-box:hover {
+    transform: translateY(-5px);
+    transition: transform 0.3s ease;
+}
+</style>
+{% endblock %}
