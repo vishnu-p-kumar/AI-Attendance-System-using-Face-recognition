@@ -74,6 +74,7 @@ Access the application through your web browser at `http://localhost:5000`
 
 ### 2. Admin Dashboard
 <img width="908" height="511" alt="image" src="https://github.com/user-attachments/assets/b6705e88-9dbf-4752-ad24-2957600379b1" />
+
 ### 2.1 Student-wise Attendance Summary Table
 <img width="939" height="521" alt="image" src="https://github.com/user-attachments/assets/3af16eea-ced3-4ca5-9c95-6264cd1af4a0" />
 
