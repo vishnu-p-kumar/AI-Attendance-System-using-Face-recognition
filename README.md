@@ -74,32 +74,20 @@ Access the application through your web browser at `http://localhost:5000`
 
 2.  Admin Dashboard
 <img width="908" height="511" alt="image" src="https://github.com/user-attachments/assets/b6705e88-9dbf-4752-ad24-2957600379b1" />
-
-    2.1 Student-wise Attendance Summary Table
+2.1 Student-wise Attendance Summary Table
 <img width="939" height="521" alt="image" src="https://github.com/user-attachments/assets/3af16eea-ced3-4ca5-9c95-6264cd1af4a0" />
-
-    2.2 Attendance Management Interface
+2.2 Attendance Management Interface
     <img width="949" height="600" alt="image" src="https://github.com/user-attachments/assets/3a7dd1ca-a68f-4389-a6ea-a6f3088e0dcb" />
-
-    2.3 TimeTable Management Interface
+ 2.3 TimeTable Management Interface
     <img width="967" height="570" alt="image" src="https://github.com/user-attachments/assets/e8ecb0bd-293a-4128-92e3-d75eda83f507" />
-
-    2.4 Add Student Interface
+2.4 Add Student Interface
     <img width="935" height="600" alt="image" src="https://github.com/user-attachments/assets/ed3ff5d2-6179-47f5-9488-0ee8866e8266" />
-
-    2.5 Add Class Interface
+ 2.5 Add Class Interface
     <img width="943" height="595" alt="image" src="https://github.com/user-attachments/assets/5ccc8eff-dda8-49ee-9f07-f1286a4820a7" />
-
-
-
-
-    
-4.  Student Dashboard
+3.  Student Dashboard
 
 <img width="897" height="579" alt="image" src="https://github.com/user-attachments/assets/5838b00a-98e0-405c-abc6-40a1d5e8dc95" />
-
-   3.1 Attendannce Graph and History Table Interface
-   
+ 3.1 Attendannce Graph and History Table Interface
    <img width="927" height="614" alt="image" src="https://github.com/user-attachments/assets/ae8a0a81-2ee1-4a60-88a6-1a2ba57feb4b" />
 
 
